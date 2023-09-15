@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { View, ScrollView, Button } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import Animated, {
   Easing,
@@ -7,8 +7,8 @@ import Animated, {
   withTiming,
   runOnJS,
 } from 'react-native-reanimated';
+import FlashMessage, { showMessage } from 'react-native-flash-message';
 
-import { RootState, fetchPopulationData, PopulationData } from '../../store';
 import PopulationChart from './PopulationChart';
 import PopulationLineChart from './PopulationLineChart';
 import {
@@ -16,28 +16,31 @@ import {
   SelectedContainerStyled,
   StyledText,
 } from './styled';
+import { RootState, fetchPopulationData, PopulationData } from '../../store';
 import Loader from '../../legos/Loader';
 import Select from '../../legos/Select/Select';
-import FlashMessage, { showMessage } from 'react-native-flash-message';
 
 const PopulationStatisticsScreen: React.FC = () => {
+  // Define component-level state variables
   const [selectedYear1, setSelectedYear1] = useState('0');
   const [selectedYear2, setSelectedYear2] = useState('0');
   const [selectedCountry, setSelectedCountry] = useState<string>('');
 
-  const dispatch = useDispatch<any>();
+  const dispatch = useDispatch<any>(); // Initialize Redux dispatch
 
+  // Select relevant data from the Redux store
   const populationData = useSelector(
     (state: RootState) => state.population.data.data,
   );
-
   const isLoading = useSelector((state: RootState) => state.population.loading);
   const error = useSelector((state: RootState) => state.population.error);
 
+  // Define shared animation values for chart animations
   const chartOpacity = useSharedValue(1);
   const chartScaleX = useSharedValue(1);
   const chartScaleY = useSharedValue(1);
 
+  // Define a function to fade in the chart with animation
   const fadeInChart = () => {
     chartOpacity.value = withTiming(1, {
       duration: 500,
@@ -45,6 +48,7 @@ const PopulationStatisticsScreen: React.FC = () => {
     });
   };
 
+  // Define a function to update the chart with animation
   const updateChartWithAnimation = () => {
     chartOpacity.value = withTiming(
       0,
@@ -55,6 +59,7 @@ const PopulationStatisticsScreen: React.FC = () => {
     );
   };
 
+  // Calculate an array of years between selectedYear1 and selectedYear2
   const calculateYearsBetween = () => {
     const yearsBetween = Array.from(
       { length: Math.abs(+selectedYear2 - +selectedYear1) + 1 },
@@ -64,6 +69,7 @@ const PopulationStatisticsScreen: React.FC = () => {
     return yearsBetween;
   };
 
+  // Use useMemo to extract unique years from the populationData
   const uniqueYears = useMemo(() => {
     const yearsSet = new Set();
     populationData?.forEach(item => {
@@ -72,10 +78,12 @@ const PopulationStatisticsScreen: React.FC = () => {
     return Array.from(yearsSet);
   }, [populationData]);
 
+  // Calculate available years for selectedYear2 based on selectedYear1
   const availableYearsForYear2 = useMemo(() => {
     return uniqueYears.filter(year => year !== selectedYear1);
   }, [uniqueYears, selectedYear1]);
 
+  // Use useMemo to extract unique countries from the populationData
   const uniqueCountries = useMemo(() => {
     const countriesSet = new Set();
     populationData?.forEach(item => {
@@ -84,6 +92,7 @@ const PopulationStatisticsScreen: React.FC = () => {
     return Array.from(countriesSet);
   }, [populationData]);
 
+  // Filter populationData for the selected country
   const populationDataForSelectedCountry: PopulationData[] = useMemo(() => {
     if (selectedCountry) {
       return populationData?.filter(item => item.Nation === selectedCountry);
@@ -91,13 +100,26 @@ const PopulationStatisticsScreen: React.FC = () => {
     return [];
   }, [selectedCountry, populationData]);
 
+  // Dispatch an action to fetch population data when the component mounts
   useEffect(() => {
     dispatch(fetchPopulationData());
   }, [dispatch]);
 
+  // Show an error message if there's an error in the Redux state
+  useEffect(() => {
+    if (error) {
+      showMessage({
+        message: 'Something is wrong',
+        type: 'danger',
+        description: error || 'Something is wrong, try again later',
+      });
+    }
+  }, [error]);
+
   return (
     <ScrollView>
       {isLoading ? (
+        // Display a loader if data is loading
         <LoaderContainerStyled>
           <Loader isLoading={isLoading} />
         </LoaderContainerStyled>
@@ -106,6 +128,7 @@ const PopulationStatisticsScreen: React.FC = () => {
           {/* @ts-ignore */}
           <StyledText marginTop={30}>Select country and years</StyledText>
           <SelectedContainerStyled>
+            {/* Render a Select component to select a country */}
             <Select
               placeholderText="Select Country"
               selectedValue={selectedCountry}
@@ -119,6 +142,7 @@ const PopulationStatisticsScreen: React.FC = () => {
             />
           </SelectedContainerStyled>
           <SelectedContainerStyled>
+            {/* Render Select components to select years */}
             <Select
               width={160}
               placeholderText="Select Year"
@@ -147,7 +171,7 @@ const PopulationStatisticsScreen: React.FC = () => {
               }))}
             />
           </SelectedContainerStyled>
-           {/* @ts-ignore */}
+          {/* @ts-ignore */}
           <StyledText marginTop={30}>Statistic between two years</StyledText>
           <Animated.View
             style={{
@@ -155,6 +179,7 @@ const PopulationStatisticsScreen: React.FC = () => {
               opacity: chartOpacity,
               transform: [{ scaleX: chartScaleX }, { scaleY: chartScaleY }],
             }}>
+            {/* Render the PopulationChart component */}
             <PopulationChart
               data={populationDataForSelectedCountry}
               selectedYears={[selectedYear1, selectedYear2]}
@@ -167,6 +192,7 @@ const PopulationStatisticsScreen: React.FC = () => {
               opacity: chartOpacity,
               transform: [{ scaleX: chartScaleX }, { scaleY: chartScaleY }],
             }}>
+            {/* Render the PopulationLineChart component */}
             <PopulationLineChart
               data={populationDataForSelectedCountry}
               selectedYears={calculateYearsBetween()}
@@ -174,17 +200,8 @@ const PopulationStatisticsScreen: React.FC = () => {
           </Animated.View>
         </View>
       )}
-       <FlashMessage position="bottom"  />
-       <Button
-        onPress={() => {
-          showMessage({
-            message: 'Something is wrong',
-            type: "danger",
-            description: error || "This is our second message",
-          });
-        }}
-        title="Request Details"
-      />
+      {/* Render FlashMessage component for displaying messages */}
+      <FlashMessage position="bottom" />
     </ScrollView>
   );
 };

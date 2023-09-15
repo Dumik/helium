@@ -1,5 +1,6 @@
 import React from 'react';
 import { BarChart } from 'react-native-chart-kit';
+
 import { PopulationData } from 'store';
 
 const PopulationChart = ({
@@ -9,17 +10,21 @@ const PopulationChart = ({
   data: PopulationData[];
   selectedYears: string[];
 }) => {
+  // Check if required data is available; return null if not
   if (!data || !selectedYears || selectedYears.length !== 2) {
     return null;
   }
 
+  // Filter data to include only the selected years
   const filteredData = data.filter(item =>
     selectedYears.includes(item.Year.toString()),
   );
 
+  // Extract labels (years) and population data for the chart
   const labels = filteredData.map(item => item.Year.toString());
 
   const populationData = filteredData.map(item => {
+    // Format population values (in millions or whole numbers)
     const populationInMillions = item.Population / 1000000;
     if (populationInMillions >= 1) {
       return populationInMillions.toFixed(3);
@@ -27,8 +32,8 @@ const PopulationChart = ({
       return item.Population?.toFixed(0);
     }
   });
-  console.log('%c jordan labels', 'color: lime;', labels, populationData);
 
+  // Define chart data with labels and population data
   const chartData = {
     labels: labels.length ? labels : ['0'],
     datasets: [
@@ -38,6 +43,7 @@ const PopulationChart = ({
     ],
   };
 
+  // Define chart configuration including styles and colors
   const chartConfig = {
     backgroundColor: '#5c62d4',
     backgroundGradientFrom: '#555ABE',
@@ -65,7 +71,6 @@ const PopulationChart = ({
       height={220}
       yAxisSuffix="M"
       chartConfig={chartConfig}
-      verticalLabelRotation={0}
       fromZero
       style={{
         marginVertical: 16,
