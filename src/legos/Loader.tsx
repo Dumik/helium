@@ -8,24 +8,24 @@ import Animated, {
 } from 'react-native-reanimated';
 
 const Loader = ({ isLoading }: { isLoading: boolean }) => {
-  const translateY = useSharedValue(0);
+  const rotate = useSharedValue(0);
 
-  const bounceConfig = {
+  const rotateConfig = {
     damping: 2,
     stiffness: 80,
   };
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
-      transform: [{ translateY: translateY.value }],
+      transform: [{ rotate: `${rotate.value}deg` }],
     };
   });
 
-  const startBounceAnimation = () => {
-    translateY.value = withRepeat(
-      withSpring(20, bounceConfig, isFinished => {
+  const startRotateAnimation = () => {
+    rotate.value = withRepeat(
+      withSpring(360, rotateConfig, isFinished => {
         if (isFinished) {
-          translateY.value = withSpring(0, bounceConfig);
+          rotate.value = withSpring(0, rotateConfig);
         }
       }),
       -1,
@@ -35,9 +35,9 @@ const Loader = ({ isLoading }: { isLoading: boolean }) => {
 
   useEffect(() => {
     if (isLoading) {
-      startBounceAnimation();
+      startRotateAnimation();
     } else {
-      translateY.value = 0;
+      rotate.value = 0;
     }
     // eslint-disable-next-line
   }, [isLoading]);
@@ -48,10 +48,13 @@ const Loader = ({ isLoading }: { isLoading: boolean }) => {
         style={[
           animatedStyle,
           {
-            backgroundColor: '#5c62d4',
             width: 50,
             height: 50,
             borderRadius: 25,
+            borderColor: '#5c62d4',
+            borderWidth: 4,
+            borderStyle: 'solid',
+            borderTopColor: 'transparent',
           },
         ]}
       />

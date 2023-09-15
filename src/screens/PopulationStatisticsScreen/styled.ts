@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
 
-export const SelectStyled = styled.View`
+export const SelectStyled = styled.View<{ width?: number }>`
   width: ${({ width }: any) => (width ? `${width}px` : '160px')};
   border-style: solid;
   border-color: #5c62d4;
@@ -22,12 +22,11 @@ export const LoaderContainerStyled = styled.View`
   flex-direction: row;
   justify-content: center;
   gap: 16px;
-  margin-top: 24px;
+  margin-top: 60px;
 `;
 
-export const StyledText = styled.Text`
-  margin-top: ${({ marginTop }: any) =>
-    marginTop ? `${marginTop}px` : '10px'};
-  font-size: 24;
+export const StyledText = styled.Text<{ marginTop?: number }>`
+  margin-top: ${({ marginTop }) => (marginTop ? `${marginTop}px` : '10px')};
+  font-size: 24px;
   text-align: center;
 `;

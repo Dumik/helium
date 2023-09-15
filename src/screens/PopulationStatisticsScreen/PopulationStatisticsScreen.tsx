@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { View, Text, ScrollView } from 'react-native';
+import { View, ScrollView, Button } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import RNPickerSelect from 'react-native-picker-select';
 import Animated, {
   Easing,
   useSharedValue,
@@ -11,19 +10,20 @@ import Animated, {
 
 import { RootState, fetchPopulationData, PopulationData } from '../../store';
 import PopulationChart from './PopulationChart';
+import PopulationLineChart from './PopulationLineChart';
 import {
   LoaderContainerStyled,
-  SelectStyled,
   SelectedContainerStyled,
   StyledText,
 } from './styled';
 import Loader from '../../legos/Loader';
-import PopulationLineChart from './PopulationLineChart';
+import Select from '../../legos/Select/Select';
+import FlashMessage, { showMessage } from 'react-native-flash-message';
 
 const PopulationStatisticsScreen: React.FC = () => {
   const [selectedYear1, setSelectedYear1] = useState('0');
   const [selectedYear2, setSelectedYear2] = useState('0');
-  const [selectedCountry, setSelectedCountry] = useState('');
+  const [selectedCountry, setSelectedCountry] = useState<string>('');
 
   const dispatch = useDispatch<any>();
 
@@ -55,15 +55,12 @@ const PopulationStatisticsScreen: React.FC = () => {
     );
   };
 
-  const calculateYearsBetween = (
-    selectedYear1: number,
-    selectedYear2: number,
-  ): string[] => {
+  const calculateYearsBetween = () => {
     const yearsBetween = Array.from(
-      { length: Math.abs(selectedYear2 - selectedYear1) + 1 },
-      (_, index) => (Math.min(selectedYear1, selectedYear2) + index).toString(),
+      { length: Math.abs(+selectedYear2 - +selectedYear1) + 1 },
+      (_, index) =>
+        (Math.min(+selectedYear1, +selectedYear2) + index).toString(),
     );
-
     return yearsBetween;
   };
 
@@ -106,77 +103,51 @@ const PopulationStatisticsScreen: React.FC = () => {
         </LoaderContainerStyled>
       ) : (
         <View>
+          {/* @ts-ignore */}
           <StyledText marginTop={30}>Select country and years</StyledText>
           <SelectedContainerStyled>
-            <SelectStyled width={340}>
-              <RNPickerSelect
-                placeholder={{ label: 'Select Country', value: null }}
-                value={selectedCountry}
-                onValueChange={value => {
-                  setSelectedCountry(value);
-                }}
-                items={uniqueCountries.map(country => ({
-                  label: `${country}`,
-                  value: `${country}`,
-                }))}
-                style={{
-                  inputIOS: {
-                    color: '#555',
-                    fontSize: 16,
-                    fontWeight: 'bold',
-                    textAlign: 'center',
-                  },
-                }}
-              />
-            </SelectStyled>
+            <Select
+              placeholderText="Select Country"
+              selectedValue={selectedCountry}
+              onValueChange={value => {
+                setSelectedCountry(value as string);
+              }}
+              items={uniqueCountries.map(country => ({
+                label: `${country}`,
+                value: `${country}`,
+              }))}
+            />
           </SelectedContainerStyled>
           <SelectedContainerStyled>
-            <SelectStyled>
-              <RNPickerSelect
-                placeholder={{ label: 'Select Year', value: null }}
-                value={selectedYear1}
-                onValueChange={value => {
-                  setSelectedYear1(value);
-                  updateChartWithAnimation();
-                }}
-                items={uniqueYears.map(year => ({
-                  label: `${year}`,
-                  value: `${year}`,
-                }))}
-                style={{
-                  inputIOS: {
-                    color: '#555',
-                    fontSize: 16,
-                    fontWeight: 'bold',
-                    textAlign: 'center',
-                  },
-                }}
-              />
-            </SelectStyled>
+            <Select
+              width={160}
+              placeholderText="Select Year"
+              selectedValue={selectedYear1}
+              onValueChange={value => {
+                setSelectedYear1(value as string);
+                updateChartWithAnimation();
+              }}
+              items={uniqueYears.map(year => ({
+                label: `${year}`,
+                value: `${year}`,
+              }))}
+            />
 
-            <SelectStyled>
-              <RNPickerSelect
-                placeholder={{ label: 'Select Year', value: null }}
-                value={selectedYear2}
-                onValueChange={value => {
-                  setSelectedYear2(value);
-                  updateChartWithAnimation();
-                }}
-                items={availableYearsForYear2.map(year => ({
-                  label: `${year}`,
-                  value: `${year}`,
-                }))}
-                style={{
-                  inputIOS: {
-                    color: '#555',
-                    fontSize: 16,
-                    fontWeight: 'bold',
-                    textAlign: 'center',
-                  },
-                }}
-              />
-            </SelectStyled>
+            <Select
+              width={160}
+              placeholderText="Select Year"
+              selectedValue={selectedYear2}
+              onValueChange={value => {
+                setSelectedYear2(value as string);
+                updateChartWithAnimation();
+              }}
+              items={availableYearsForYear2.map(year => ({
+                label: `${year}`,
+                value: `${year}`,
+              }))}
+            />
           </SelectedContainerStyled>
+           {/* @ts-ignore */}
           <StyledText marginTop={30}>Statistic between two years</StyledText>
           <Animated.View
             style={{
@@ -198,16 +169,22 @@ const PopulationStatisticsScreen: React.FC = () => {
             }}>
             <PopulationLineChart
               data={populationDataForSelectedCountry}
-              selectedYears={calculateYearsBetween(
-                +selectedYear1,
-                +selectedYear2,
-              )}
+              selectedYears={calculateYearsBetween()}
             />
           </Animated.View>
-
-          {error && <Text>Error: {`${error}`}</Text>}
         </View>
       )}
+       <FlashMessage position="bottom"  />
+       <Button
+        onPress={() => {
+          showMessage({
+            message: 'Something is wrong',
+            type: "danger",
+            description: error || "This is our second message",
+          });
+        }}
+        title="Request Details"
+      />
     </ScrollView>
   );
 };
