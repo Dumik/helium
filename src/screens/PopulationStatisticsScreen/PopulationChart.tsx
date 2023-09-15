@@ -1,58 +1,56 @@
 import React from 'react';
-import {LineChart} from 'react-native-chart-kit';
-import {PopulationData} from 'store';
+import { BarChart } from 'react-native-chart-kit';
+import { PopulationData } from 'store';
 
-const PopulationLineChart = ({
+const PopulationChart = ({
   data,
   selectedYears,
 }: {
   data: PopulationData[];
   selectedYears: string[];
 }) => {
-  console.log('%c jordan selectedYears', 'color: lime;', selectedYears);
+  if (!data || !selectedYears || selectedYears.length !== 2) {
+    return null;
+  }
 
-  const filteredData = data.filter(item => {
-    return selectedYears.includes(item.Year.toString());
-  });
+  const filteredData = data.filter(item =>
+    selectedYears.includes(item.Year.toString()),
+  );
 
-  const labels = filteredData.map(item => {
-    console.log('%c jordan item', 'color: lime;', item.Year);
-    return item.Year.toString();
-  });
+  const labels = filteredData.map(item => item.Year.toString());
 
   const populationData = filteredData.map(item => {
     const populationInMillions = item.Population / 1000000;
     if (populationInMillions >= 1) {
       return populationInMillions.toFixed(3);
     } else {
-      return item.Population.toFixed(0);
+      return item.Population?.toFixed(0);
     }
   });
+  console.log('%c jordan labels', 'color: lime;', labels, populationData);
 
   const chartData = {
-    labels: labels.reverse(),
+    labels: labels.length ? labels : ['0'],
     datasets: [
       {
-        data: populationData.reverse(),
-        color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`,
-        strokeWidth: 2,
+        data: populationData.length ? populationData : ['0'],
       },
     ],
-    legend: ['Population'],
   };
 
   const chartConfig = {
     backgroundColor: '#5c62d4',
-    backgroundGradientFrom: '#999ce5',
-    backgroundGradientTo: '#555ABE',
+    backgroundGradientFrom: '#555ABE',
+    backgroundGradientTo: '#9396de',
     decimalPlaces: 1,
     color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
     labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
     style: {
       borderRadius: 16,
+      paddingTop: 20,
     },
     propsForDots: {
-      r: '4',
+      r: '6',
       strokeWidth: '2',
       stroke: '#5c62d4',
     },
@@ -60,21 +58,21 @@ const PopulationLineChart = ({
   };
 
   return (
-    <LineChart
+    <BarChart
       //@ts-ignore
       data={chartData}
       width={340}
-      height={200}
-      verticalLabelRotation={20}
+      height={220}
+      yAxisSuffix="M"
       chartConfig={chartConfig}
-      bezier
+      verticalLabelRotation={0}
+      fromZero
       style={{
         marginVertical: 16,
         borderRadius: 16,
-        marginTop: 10,
       }}
     />
   );
 };
 
-export default PopulationLineChart;
+export default PopulationChart;

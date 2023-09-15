@@ -1,7 +1,7 @@
 import styled from 'styled-components/native';
 
 export const SelectStyled = styled.View`
-  width: 160px;
+  width: ${({ width }: any) => (width ? `${width}px` : '160px')};
   border-style: solid;
   border-color: #5c62d4;
   border-width: 1px;
@@ -15,7 +15,7 @@ export const SelectedContainerStyled = styled.View`
   flex-direction: row;
   justify-content: center;
   gap: 16px;
-  margin-top: 80px;
+  margin-top: 20px;
 `;
 
 export const LoaderContainerStyled = styled.View`
@@ -23,4 +23,11 @@ export const LoaderContainerStyled = styled.View`
   justify-content: center;
   gap: 16px;
   margin-top: 24px;
+`;
+
+export const StyledText = styled.Text`
+  margin-top: ${({ marginTop }: any) =>
+    marginTop ? `${marginTop}px` : '10px'};
+  font-size: 24;
+  text-align: center;
 `;

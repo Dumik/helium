@@ -1,5 +1,5 @@
-import React, {useEffect} from 'react';
-import {View} from 'react-native';
+import React, { useEffect } from 'react';
+import { View } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -7,37 +7,46 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 
-const Loader = ({isLoading}: {isLoading: boolean}) => {
-  const scale = useSharedValue(1);
+const Loader = ({ isLoading }: { isLoading: boolean }) => {
+  const translateY = useSharedValue(0);
 
-  const pulseConfig = {
+  const bounceConfig = {
     damping: 2,
+    stiffness: 80,
   };
 
-  const animatedScaleStyle = useAnimatedStyle(() => {
+  const animatedStyle = useAnimatedStyle(() => {
     return {
-      transform: [{scale: scale.value}],
+      transform: [{ translateY: translateY.value }],
     };
   });
 
-  const startPulseAnimation = () => {
-    scale.value = withRepeat(withSpring(1.1, pulseConfig), -1, true);
+  const startBounceAnimation = () => {
+    translateY.value = withRepeat(
+      withSpring(20, bounceConfig, isFinished => {
+        if (isFinished) {
+          translateY.value = withSpring(0, bounceConfig);
+        }
+      }),
+      -1,
+      false,
+    );
   };
 
   useEffect(() => {
     if (isLoading) {
-      startPulseAnimation();
+      startBounceAnimation();
     } else {
-      scale.value = 1;
+      translateY.value = 0;
     }
     // eslint-disable-next-line
   }, [isLoading]);
 
   return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <Animated.View
         style={[
-          animatedScaleStyle,
+          animatedStyle,
           {
             backgroundColor: '#5c62d4',
             width: 50,

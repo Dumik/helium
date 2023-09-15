@@ -4,10 +4,11 @@ import {
   createBottomTabNavigator,
 } from '@react-navigation/bottom-tabs';
 
-import {Screens} from './types';
-import PopulationStatisticsScreen from '../screens/PopulationStatisticsScreen';
+import { Screens } from './types';
+import PopulationStatisticsScreen from '../screens/PopulationStatisticsScreen/PopulationStatisticsScreen';
 import StatisticIcon from '../legos/icons/StatisticIcon';
 import FavoriteIcon from '../legos/icons/FavoriteIcon';
+import { FavoriteScreen } from '../screens/FavoriteScreen/FavoriteScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -38,20 +39,20 @@ export const Tabs = () => {
         options={{
           tabBarShowLabel: false,
           headerShown: true,
-          title: 'Statistics',
-          tabBarIcon: ({focused}) => (
+          title: 'Population Statistics',
+          tabBarIcon: ({ focused }) => (
             <StatisticIcon color={focused ? '#5c62d4' : '#555555'} size={30} />
           ),
         }}
       />
       <Tab.Screen
         name={Screens.FavoriteCountryPopulations}
-        component={PopulationStatisticsScreen}
+        component={FavoriteScreen}
         options={{
           tabBarShowLabel: false,
           headerShown: true,
-          title: 'Statistics',
-          tabBarIcon: ({focused}) => (
+          title: 'Favorite Statistics',
+          tabBarIcon: ({ focused }) => (
             <FavoriteIcon color={focused ? '#5c62d4' : '#555555'} size={30} />
           ),
         }}

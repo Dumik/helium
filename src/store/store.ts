@@ -1,4 +1,4 @@
-import {configureStore} from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit';
 import populationReducer from './populationSlice';
 
 export type RootState = ReturnType<typeof store.getState>;

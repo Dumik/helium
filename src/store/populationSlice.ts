@@ -1,4 +1,4 @@
-import {createSlice, createAsyncThunk, PayloadAction} from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 
 export interface PopulationData {
   Year: string;
@@ -7,13 +7,13 @@ export interface PopulationData {
 }
 
 interface PopulationState {
-  data: {data: PopulationData[]};
+  data: { data: PopulationData[] };
   loading: boolean;
   error: string | null;
 }
 
 const initialState: PopulationState = {
-  data: {data: []},
+  data: { data: [] },
   loading: false,
   error: null,
 };

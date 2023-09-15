@@ -1,1 +1,1 @@
-export * from './PopulationStatisticsScreen';
+export * from './PopulationStatisticsScreen/PopulationStatisticsScreen';

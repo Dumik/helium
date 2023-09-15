@@ -1,6 +1,6 @@
-import React, {useEffect, useMemo, useState} from 'react';
-import {View, Text, ScrollView} from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
+import React, { useEffect, useMemo, useState } from 'react';
+import { View, Text, ScrollView } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 import RNPickerSelect from 'react-native-picker-select';
 import Animated, {
   Easing,
@@ -9,19 +9,21 @@ import Animated, {
   runOnJS,
 } from 'react-native-reanimated';
 
-import {RootState, fetchPopulationData} from '../store';
+import { RootState, fetchPopulationData, PopulationData } from '../../store';
 import PopulationChart from './PopulationChart';
 import {
   LoaderContainerStyled,
   SelectStyled,
   SelectedContainerStyled,
+  StyledText,
 } from './styled';
-import Loader from '../legos/Loader';
+import Loader from '../../legos/Loader';
 import PopulationLineChart from './PopulationLineChart';
 
 const PopulationStatisticsScreen: React.FC = () => {
-  const [selectedYear1, setSelectedYear1] = useState('');
-  const [selectedYear2, setSelectedYear2] = useState('');
+  const [selectedYear1, setSelectedYear1] = useState('0');
+  const [selectedYear2, setSelectedYear2] = useState('0');
+  const [selectedCountry, setSelectedCountry] = useState('');
 
   const dispatch = useDispatch<any>();
 
@@ -36,14 +38,17 @@ const PopulationStatisticsScreen: React.FC = () => {
   const chartScaleX = useSharedValue(1);
   const chartScaleY = useSharedValue(1);
 
-  useEffect(() => {
-    dispatch(fetchPopulationData());
-  }, [dispatch]);
+  const fadeInChart = () => {
+    chartOpacity.value = withTiming(1, {
+      duration: 500,
+      easing: Easing.inOut(Easing.ease),
+    });
+  };
 
   const updateChartWithAnimation = () => {
     chartOpacity.value = withTiming(
       0,
-      {duration: 500, easing: Easing.inOut(Easing.ease)},
+      { duration: 500, easing: Easing.inOut(Easing.ease) },
       () => {
         runOnJS(fadeInChart)();
       },
@@ -55,18 +60,11 @@ const PopulationStatisticsScreen: React.FC = () => {
     selectedYear2: number,
   ): string[] => {
     const yearsBetween = Array.from(
-      {length: Math.abs(selectedYear2 - selectedYear1) + 1},
+      { length: Math.abs(selectedYear2 - selectedYear1) + 1 },
       (_, index) => (Math.min(selectedYear1, selectedYear2) + index).toString(),
     );
 
     return yearsBetween;
-  };
-
-  const fadeInChart = () => {
-    chartOpacity.value = withTiming(1, {
-      duration: 500,
-      easing: Easing.inOut(Easing.ease),
-    });
   };
 
   const uniqueYears = useMemo(() => {
@@ -81,43 +79,61 @@ const PopulationStatisticsScreen: React.FC = () => {
     return uniqueYears.filter(year => year !== selectedYear1);
   }, [uniqueYears, selectedYear1]);
 
-  useEffect(() => {
-    if (
-      !selectedYear1 &&
-      !selectedYear2 &&
-      !isLoading &&
-      uniqueYears &&
-      availableYearsForYear2
-    ) {
-      setSelectedYear1(uniqueYears[0] as string);
-      setSelectedYear2(uniqueYears[1] as string);
-    }
-  }, [
-    availableYearsForYear2,
-    isLoading,
-    selectedYear1,
-    selectedYear2,
-    uniqueYears,
-  ]);
+  const uniqueCountries = useMemo(() => {
+    const countriesSet = new Set();
+    populationData?.forEach(item => {
+      countriesSet.add(item.Nation);
+    });
+    return Array.from(countriesSet);
+  }, [populationData]);
 
-  console.log(
-    '%c jordan yearsBetween',
-    'color: lime;',
-    calculateYearsBetween(+selectedYear1, +selectedYear2),
-  );
+  const populationDataForSelectedCountry: PopulationData[] = useMemo(() => {
+    if (selectedCountry) {
+      return populationData?.filter(item => item.Nation === selectedCountry);
+    }
+    return [];
+  }, [selectedCountry, populationData]);
+
+  useEffect(() => {
+    dispatch(fetchPopulationData());
+  }, [dispatch]);
 
   return (
     <ScrollView>
-      {isLoading || (!selectedYear1 && !selectedYear2) ? (
+      {isLoading ? (
         <LoaderContainerStyled>
-          <Loader isLoading={isLoading || (!selectedYear1 && !selectedYear2)} />
+          <Loader isLoading={isLoading} />
         </LoaderContainerStyled>
       ) : (
         <View>
+          <StyledText marginTop={30}>Select country and years</StyledText>
+          <SelectedContainerStyled>
+            <SelectStyled width={340}>
+              <RNPickerSelect
+                placeholder={{ label: 'Select Country', value: null }}
+                value={selectedCountry}
+                onValueChange={value => {
+                  setSelectedCountry(value);
+                }}
+                items={uniqueCountries.map(country => ({
+                  label: `${country}`,
+                  value: `${country}`,
+                }))}
+                style={{
+                  inputIOS: {
+                    color: '#555',
+                    fontSize: 16,
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                  },
+                }}
+              />
+            </SelectStyled>
+          </SelectedContainerStyled>
           <SelectedContainerStyled>
             <SelectStyled>
               <RNPickerSelect
-                placeholder={{label: 'Select Year', value: null}}
+                placeholder={{ label: 'Select Year', value: null }}
                 value={selectedYear1}
                 onValueChange={value => {
                   setSelectedYear1(value);
@@ -140,7 +156,7 @@ const PopulationStatisticsScreen: React.FC = () => {
 
             <SelectStyled>
               <RNPickerSelect
-                placeholder={{label: 'Select Year', value: null}}
+                placeholder={{ label: 'Select Year', value: null }}
                 value={selectedYear2}
                 onValueChange={value => {
                   setSelectedYear2(value);
@@ -161,26 +177,27 @@ const PopulationStatisticsScreen: React.FC = () => {
               />
             </SelectStyled>
           </SelectedContainerStyled>
-
+          <StyledText marginTop={30}>Statistic between two years</StyledText>
           <Animated.View
             style={{
               alignItems: 'center',
               opacity: chartOpacity,
-              transform: [{scaleX: chartScaleX}, {scaleY: chartScaleY}],
+              transform: [{ scaleX: chartScaleX }, { scaleY: chartScaleY }],
             }}>
             <PopulationChart
-              data={populationData}
+              data={populationDataForSelectedCountry}
               selectedYears={[selectedYear1, selectedYear2]}
             />
           </Animated.View>
+          <StyledText>Statistic of range years</StyledText>
           <Animated.View
             style={{
               alignItems: 'center',
               opacity: chartOpacity,
-              transform: [{scaleX: chartScaleX}, {scaleY: chartScaleY}],
+              transform: [{ scaleX: chartScaleX }, { scaleY: chartScaleY }],
             }}>
             <PopulationLineChart
-              data={populationData}
+              data={populationDataForSelectedCountry}
               selectedYears={calculateYearsBetween(
                 +selectedYear1,
                 +selectedYear2,

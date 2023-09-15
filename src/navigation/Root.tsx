@@ -3,10 +3,10 @@ import {
   NavigationContainer,
   createNavigationContainerRef,
 } from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import {Tabs} from './Tabs';
-import {RootStackParamList, Screens} from './types';
+import { Tabs } from './Tabs';
+import { RootStackParamList, Screens } from './types';
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 
@@ -24,7 +24,7 @@ export const Root = () => {
           <RootStack.Screen
             component={Tabs}
             name={Screens.Tabs}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
         </RootStack.Group>
       </RootStack.Navigator>
