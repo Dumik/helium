@@ -26,7 +26,7 @@ const PopulationStatisticsScreen: React.FC = () => {
   const [selectedYear2, setSelectedYear2] = useState('0');
   const [selectedCountry, setSelectedCountry] = useState<string>('');
 
-  const dispatch = useDispatch<any>(); // Initialize Redux dispatch
+  const dispatch = useDispatch<any>();
 
   // Select relevant data from the Redux store
   const populationData = useSelector(
@@ -69,20 +69,6 @@ const PopulationStatisticsScreen: React.FC = () => {
     return yearsBetween;
   };
 
-  // Use useMemo to extract unique years from the populationData
-  const uniqueYears = useMemo(() => {
-    const yearsSet = new Set();
-    populationData?.forEach(item => {
-      yearsSet.add(item.Year);
-    });
-    return Array.from(yearsSet);
-  }, [populationData]);
-
-  // Calculate available years for selectedYear2 based on selectedYear1
-  const availableYearsForYear2 = useMemo(() => {
-    return uniqueYears.filter(year => year !== selectedYear1);
-  }, [uniqueYears, selectedYear1]);
-
   // Use useMemo to extract unique countries from the populationData
   const uniqueCountries = useMemo(() => {
     const countriesSet = new Set();
@@ -100,6 +86,29 @@ const PopulationStatisticsScreen: React.FC = () => {
     return [];
   }, [selectedCountry, populationData]);
 
+  // Use useMemo to extract unique years from the populationData
+  const uniqueYears = useMemo(() => {
+    const yearsSet = new Set();
+    populationDataForSelectedCountry?.forEach(item => {
+      yearsSet.add(item.Year);
+    });
+    return Array.from(yearsSet);
+  }, [populationDataForSelectedCountry]);
+
+  // Calculate available years for selectedYear2 based on selectedYear1
+  const availableYearsForYear2 = useMemo(() => {
+    return uniqueYears.filter(year => year !== selectedYear1);
+  }, [uniqueYears, selectedYear1]);
+
+  const showFlashMessage = () => {
+    showMessage({
+      message: 'Something is wrong',
+      type: 'danger',
+      description: error || 'Something is wrong, try again later',
+      duration: 10000,
+    });
+  };
+
   // Dispatch an action to fetch population data when the component mounts
   useEffect(() => {
     dispatch(fetchPopulationData());
@@ -108,11 +117,7 @@ const PopulationStatisticsScreen: React.FC = () => {
   // Show an error message if there's an error in the Redux state
   useEffect(() => {
     if (error) {
-      showMessage({
-        message: 'Something is wrong',
-        type: 'danger',
-        description: error || 'Something is wrong, try again later',
-      });
+      showFlashMessage();
     }
   }, [error]);
 
@@ -144,7 +149,7 @@ const PopulationStatisticsScreen: React.FC = () => {
           <SelectedContainerStyled>
             {/* Render Select components to select years */}
             <Select
-              width={160}
+              width={162}
               placeholderText="Select Year"
               selectedValue={selectedYear1}
               onValueChange={value => {
@@ -155,6 +160,7 @@ const PopulationStatisticsScreen: React.FC = () => {
                 label: `${year}`,
                 value: `${year}`,
               }))}
+              disabled={!selectedCountry}
             />
 
             <Select
@@ -169,10 +175,14 @@ const PopulationStatisticsScreen: React.FC = () => {
                 label: `${year}`,
                 value: `${year}`,
               }))}
+              disabled={!selectedCountry}
             />
           </SelectedContainerStyled>
+
           {/* @ts-ignore */}
-          <StyledText marginTop={30}>Statistic between two years</StyledText>
+          <StyledText marginTop={30} fontSize={20}>
+            Statistic between two years
+          </StyledText>
           <Animated.View
             style={{
               alignItems: 'center',
@@ -185,7 +195,9 @@ const PopulationStatisticsScreen: React.FC = () => {
               selectedYears={[selectedYear1, selectedYear2]}
             />
           </Animated.View>
-          <StyledText>Statistic of range years</StyledText>
+
+          {/* @ts-ignore */}
+          <StyledText fontSize={20}>Statistic of range years</StyledText>
           <Animated.View
             style={{
               alignItems: 'center',
@@ -201,7 +213,7 @@ const PopulationStatisticsScreen: React.FC = () => {
         </View>
       )}
       {/* Render FlashMessage component for displaying messages */}
-      <FlashMessage position="bottom" />
+      <FlashMessage position="top" />
     </ScrollView>
   );
 };

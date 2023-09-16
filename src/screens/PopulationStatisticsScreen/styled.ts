@@ -14,9 +14,12 @@ export const LoaderContainerStyled = styled.View`
   margin-top: 60px;
 `;
 
-export const StyledText = styled.Text<{ marginTop?: number }>`
+export const StyledText = styled.Text<{
+  marginTop?: number;
+  fontSize?: number;
+}>`
   margin-top: ${({ marginTop }) => (marginTop ? `${marginTop}px` : '10px')};
-  font-size: 24px;
+  font-size: ${({ fontSize }) => (fontSize ? `${fontSize}px` : '24px')};
   text-align: center;
   color: #555555;
 `;

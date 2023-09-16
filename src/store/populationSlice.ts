@@ -18,7 +18,6 @@ const initialState: PopulationState = {
   error: null,
 };
 
-// Create an async thunk to fetch population data from an API
 export const fetchPopulationData = createAsyncThunk(
   'population/fetchPopulationData',
   async () => {
@@ -49,22 +48,22 @@ const populationSlice = createSlice({
       .addCase(fetchPopulationData.pending, state => {
         // Set loading to true when the request is pending
         state.loading = true;
-        state.error = null; // Clear any previous errors
+        state.error = null;
       })
       .addCase(
         fetchPopulationData.fulfilled,
         (state, action: PayloadAction<PopulationData[]>) => {
           // Handle successful data fetching
-          state.loading = false; // Set loading to false
-          (state.data as any) = action.payload; // Update state with fetched data
+          state.loading = false;
+          (state.data as any) = action.payload;
         },
       )
       .addCase(fetchPopulationData.rejected, (state, action) => {
         // Handle the case where data fetching is rejected
-        state.loading = false; // Set loading to false
-        state.error = action.error.message || 'An unknown error occurred'; // Store the error message
+        state.loading = false;
+        state.error = action.error.message || 'An unknown error occurred';
       });
   },
 });
 
-export default populationSlice.reducer; // Export the reducer for use in the Redux store
+export default populationSlice.reducer;

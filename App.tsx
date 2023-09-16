@@ -1,8 +1,8 @@
 import React from 'react';
-import {Provider} from 'react-redux';
+import { Provider } from 'react-redux';
 
 import store from './src/store/store';
-import {Root} from './src/navigation/Root';
+import { Root } from './src/navigation/Root';
 
 function App(): JSX.Element {
   return (

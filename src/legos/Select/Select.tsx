@@ -1,5 +1,5 @@
 import React from 'react';
-import { ViewStyle } from 'react-native';
+import { ViewStyle, Platform } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import { SelectStyled } from './styled';
 
@@ -10,6 +10,7 @@ interface SelectProps {
   onValueChange: (value: string | null) => void;
   items: { label: string; value: string }[];
   style?: ViewStyle;
+  disabled?: boolean;
 }
 
 const Select: React.FC<SelectProps> = ({
@@ -19,17 +20,34 @@ const Select: React.FC<SelectProps> = ({
   onValueChange,
   items,
   style,
+  disabled,
 }) => {
+  const isIOS = Platform.OS === 'ios';
   return (
-    <SelectStyled width={width} style={style}>
+    <SelectStyled
+      //@ts-ignore
+      paddingTop={isIOS ? 12 : '0'}
+      paddingBottom={isIOS ? 12 : '0'}
+      width={width}
+      bgColor={disabled ? '#eee' : '#ffffff'}
+      style={style}>
       <RNPickerSelect
         placeholder={{ label: placeholderText, value: null }}
         value={selectedValue}
+        disabled={disabled}
         onValueChange={onValueChange}
         items={items}
         style={{
-          inputIOS: {
+          placeholder: {
             color: '#555',
+          },
+          inputIOS: {
+            fontSize: 16,
+            fontWeight: 'bold',
+            textAlign: 'center',
+          },
+          inputAndroid: {
+            padding: 0,
             fontSize: 16,
             fontWeight: 'bold',
             textAlign: 'center',

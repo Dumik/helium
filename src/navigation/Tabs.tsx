@@ -18,14 +18,22 @@ export const Tabs = () => {
       tabBarShowLabel: false,
       headerShown: false,
       tabBarStyle: {
+        borderTopColor: '#5c62d4',
         paddingTop: 15,
         top: 0,
-        backgroundColor: '#f7f7f7',
         height: 100,
-        borderColor: '#274C67',
+      },
+
+      headerStyle: {
+        backgroundColor: '#5c62d4',
+      },
+      headerTitleStyle: {
+        color: '#fff',
+        fontSize: 20,
       },
 
       tabBarItemStyle: {
+        borderTopColor: '#5c62d4',
         borderRadius: 10,
       },
     };
@@ -39,9 +47,9 @@ export const Tabs = () => {
         options={{
           tabBarShowLabel: false,
           headerShown: true,
-          title: 'Population Statistics',
+          title: 'Population statistics',
           tabBarIcon: ({ focused }) => (
-            <StatisticIcon color={focused ? '#5c62d4' : '#555555'} size={30} />
+            <StatisticIcon color={focused ? '#5c62d4' : '#555555'} size={35} />
           ),
         }}
       />
@@ -53,7 +61,7 @@ export const Tabs = () => {
           headerShown: true,
           title: 'Favorite Statistics',
           tabBarIcon: ({ focused }) => (
-            <FavoriteIcon color={focused ? '#5c62d4' : '#555555'} size={30} />
+            <FavoriteIcon color={focused ? '#5c62d4' : '#555555'} size={35} />
           ),
         }}
       />
