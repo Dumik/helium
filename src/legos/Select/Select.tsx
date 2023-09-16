@@ -2,6 +2,7 @@ import React from 'react';
 import { ViewStyle, Platform } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import { SelectStyled } from './styled';
+import { theme } from '../../utils/theme';
 
 interface SelectProps {
   width?: number;
@@ -29,7 +30,7 @@ const Select: React.FC<SelectProps> = ({
       paddingTop={isIOS ? 12 : '0'}
       paddingBottom={isIOS ? 12 : '0'}
       width={width}
-      bgColor={disabled ? '#eee' : '#ffffff'}
+      bgColor={disabled ? theme.colors.grayLight : theme.colors.white}
       style={style}>
       <RNPickerSelect
         placeholder={{ label: placeholderText, value: null }}
@@ -39,7 +40,7 @@ const Select: React.FC<SelectProps> = ({
         items={items}
         style={{
           placeholder: {
-            color: '#555',
+            color: theme.colors.gray,
           },
           inputIOS: {
             fontSize: 16,

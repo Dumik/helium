@@ -2,6 +2,7 @@ import React from 'react';
 import { BarChart } from 'react-native-chart-kit';
 
 import { PopulationData } from 'store';
+import { theme } from '../../utils/theme';
 
 const PopulationChart = ({
   data,
@@ -45,9 +46,9 @@ const PopulationChart = ({
 
   // Define chart configuration including styles and colors
   const chartConfig = {
-    backgroundColor: '#5c62d4',
-    backgroundGradientFrom: '#555ABE',
-    backgroundGradientTo: '#9396de',
+    backgroundColor: theme.colors.primary,
+    backgroundGradientFrom: theme.colors.gradient1,
+    backgroundGradientTo: theme.colors.gradient2,
     decimalPlaces: 1,
     color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
     labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
@@ -58,7 +59,7 @@ const PopulationChart = ({
     propsForDots: {
       r: '6',
       strokeWidth: '2',
-      stroke: '#5c62d4',
+      stroke: theme.colors.primary,
     },
     yAxisLabel: '',
   };

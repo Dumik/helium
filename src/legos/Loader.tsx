@@ -6,6 +6,7 @@ import Animated, {
   withRepeat,
   withSpring,
 } from 'react-native-reanimated';
+import { theme } from '../utils/theme';
 
 const Loader = ({ isLoading }: { isLoading: boolean }) => {
   const rotate = useSharedValue(0);
@@ -51,7 +52,7 @@ const Loader = ({ isLoading }: { isLoading: boolean }) => {
             width: 50,
             height: 50,
             borderRadius: 25,
-            borderColor: '#5c62d4',
+            borderColor: theme.colors.primary,
             borderWidth: 4,
             borderStyle: 'solid',
             borderTopColor: 'transparent',

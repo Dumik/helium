@@ -2,6 +2,7 @@ import React from 'react';
 import { LineChart } from 'react-native-chart-kit';
 
 import { PopulationData } from 'store';
+import { theme } from '../../utils/theme';
 
 const PopulationLineChart = ({
   data,
@@ -45,9 +46,9 @@ const PopulationLineChart = ({
 
   // Define chart configuration including styles and colors
   const chartConfig = {
-    backgroundColor: '#5c62d4',
-    backgroundGradientFrom: '#999ce5',
-    backgroundGradientTo: '#555ABE',
+    backgroundColor: theme.colors.primary,
+    backgroundGradientFrom: theme.colors.gradient2,
+    backgroundGradientTo: theme.colors.gradient1,
     decimalPlaces: 1,
     color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
     labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
@@ -57,7 +58,7 @@ const PopulationLineChart = ({
     propsForDots: {
       r: '4',
       strokeWidth: '2',
-      stroke: '#5c62d4',
+      stroke: theme.colors.primary,
     },
     yAxisLabel: '',
   };

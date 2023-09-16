@@ -1,5 +1,7 @@
 import styled from 'styled-components/native';
 
+import { theme } from '../../utils/theme';
+
 export const SelectedContainerStyled = styled.View`
   flex-direction: row;
   justify-content: center;
@@ -21,5 +23,5 @@ export const StyledText = styled.Text<{
   margin-top: ${({ marginTop }) => (marginTop ? `${marginTop}px` : '10px')};
   font-size: ${({ fontSize }) => (fontSize ? `${fontSize}px` : '24px')};
   text-align: center;
-  color: #555555;
+  color: ${theme.colors.gray};
 `;

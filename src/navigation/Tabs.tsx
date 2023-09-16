@@ -9,6 +9,7 @@ import PopulationStatisticsScreen from '../screens/PopulationStatisticsScreen/Po
 import StatisticIcon from '../legos/icons/StatisticIcon';
 import FavoriteIcon from '../legos/icons/FavoriteIcon';
 import { FavoriteScreen } from '../screens/FavoriteScreen/FavoriteScreen';
+import { theme } from '../utils/theme';
 
 const Tab = createBottomTabNavigator();
 
@@ -18,22 +19,22 @@ export const Tabs = () => {
       tabBarShowLabel: false,
       headerShown: false,
       tabBarStyle: {
-        borderTopColor: '#5c62d4',
+        borderTopColor: theme.colors.primary,
         paddingTop: 15,
         top: 0,
         height: 100,
       },
 
       headerStyle: {
-        backgroundColor: '#5c62d4',
+        backgroundColor: theme.colors.primary,
       },
       headerTitleStyle: {
-        color: '#fff',
+        color: theme.colors.white,
         fontSize: 20,
       },
 
       tabBarItemStyle: {
-        borderTopColor: '#5c62d4',
+        borderTopColor: theme.colors.primary,
         borderRadius: 10,
       },
     };
@@ -49,7 +50,10 @@ export const Tabs = () => {
           headerShown: true,
           title: 'Population statistics',
           tabBarIcon: ({ focused }) => (
-            <StatisticIcon color={focused ? '#5c62d4' : '#555555'} size={35} />
+            <StatisticIcon
+              color={focused ? theme.colors.primary : theme.colors.gray}
+              size={35}
+            />
           ),
         }}
       />
@@ -61,7 +65,10 @@ export const Tabs = () => {
           headerShown: true,
           title: 'Favorite Statistics',
           tabBarIcon: ({ focused }) => (
-            <FavoriteIcon color={focused ? '#5c62d4' : '#555555'} size={35} />
+            <FavoriteIcon
+              color={focused ? theme.colors.primary : theme.colors.gray}
+              size={35}
+            />
           ),
         }}
       />
