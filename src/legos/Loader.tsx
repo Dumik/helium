@@ -6,6 +6,7 @@ import Animated, {
   withRepeat,
   withSpring,
 } from 'react-native-reanimated';
+
 import { theme } from '../utils/theme';
 
 const Loader = ({ isLoading }: { isLoading: boolean }) => {
